@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\TransaksiController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -43,5 +45,13 @@ Route::group(['middleware' => ['auth']],function () {
     Route::post('/product/update/{id}', [ProductController::class, 'update'])->name('product.update');
     Route::post('/product/destroy/{id}', [ProductController::class, 'destroy'])->name('product.destroy');
     
-    
+
+    //Transaksi
+    Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');
+    Route::get('/transaksi/search', [TransaksiController::class, 'search'])->name('transaksi.search');
+    Route::post('/transaksi', [TransaksiController::class, 'store'])->name('transaksi.store');
+    Route::get('/transaksi/filter', [TransaksiController::class, 'filter'])->name('transaksi.filter');
+    Route::get('/transaksi/export', [TransaksiController::class, 'export'])->name('transaksi.export');
+    Route::post('/transaksi/update/{id}', [TransaksiController::class, 'update'])->name('transaksi.update');
+    Route::post('/transaksi/destroy/{id}', [TransaksiController::class, 'destroy'])->name('transaksi.destroy');
 });

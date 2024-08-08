@@ -17,7 +17,9 @@ class TransaksiFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'product_id' => $this->faker->numberBetween(1, 10),
+            'total_amount' => $this->faker->randomNumber(2), 
+            'status' => $this->faker->boolean() ? 1 : 0,
         ];
     }
 }

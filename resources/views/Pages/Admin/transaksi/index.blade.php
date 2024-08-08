@@ -9,21 +9,21 @@
         <h1 class="h3 mb-2 text-gray-800">{{ $title }}</h1>
         <p class="my-4">Lorem ipsum dolor sit amet consectetur, adipisicing elit.</p>
         <div class="my-4">
-            <button data-toggle="modal" data-target="#addProduct" class="btn btn-primary btn-icon-split">
+            <button data-toggle="modal" data-target="#addTransaksi" class="btn btn-primary btn-icon-split">
                 <span class="icon text-white-50">
                     <i class="fas fa-plus"></i>
                 </span>
                 <span class="text">Tambah</span>
             </button>
             
-            <button data-toggle="modal" data-target="#filterProduct" class="btn btn-secondary btn-icon-split">
+            <button data-toggle="modal" data-target="#filterTransaksi" class="btn btn-secondary btn-icon-split">
                 <span class="icon text-white-50">
                     <i class="fas fa-filter"></i>
                 </span>
                 <span class="text">Filter</span>
             </button>
             
-            <button data-toggle="modal" data-target="#exportProduct" class="btn btn-success btn-icon-split">
+            <button data-toggle="modal" data-target="#exportTransaksi" class="btn btn-success btn-icon-split">
                 <span class="icon text-white-50">
                     <i class="fas fa-file-export"></i>
                 </span>
@@ -39,7 +39,7 @@
                 <div class="d-flex justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Tabel {{ $title }}</h6>
                     
-                    <form action="{{ route('product.search') }}" method="GET">
+                    <form action="{{ route('transaksi.search') }}" method="GET">
                         <div class="input-group">
                             <input type="text" name="search" class="form-control bg-light border-1 small" placeholder="Search for..."
                                 aria-label="Search" aria-describedby="basic-addon2">
@@ -60,11 +60,9 @@
                         <thead>
                             <tr>
                                 <th>Id</th>
-                                <th>Name</th>
-                                <th>Weight</th>
-                                <th>Size</th>
-                                <th>Type</th>
-                                <th>Jumlah Penjualan</th>
+                                <th>Name Product</th>
+                                <th>Harga</th>
+                                <th>Status</th>
                                 <th>Tanggal Di Buat</th>
                                 <th>Action</th>
                             </tr>
@@ -73,11 +71,15 @@
                             @foreach($data as $item)
                             <tr>
                                 <th scope="row">{{ $loop->iteration }}</th>
-                                <td>{{ $item->name }}</td>
-                                <td>{{ $item->weight }}</td>
-                                <td>{{ $item->size }}</td>
-                                <td>{{ $item->type }}</td>
-                                <td>Jumlah Penjualan</td>
+                                <td>{{ $item->name_product }}</td>
+                                <td>{{ $item->total_amount }}</td>
+                                <td>
+                                    @if( $item->status == 1)
+                                        Sudah Bayar
+                                    @else
+                                        Belum Bayar
+                                    @endif
+                                </td>
                                 <td>{{ $item->created_at }}</td>
                                 <td>
                                     <button 
@@ -107,12 +109,12 @@
     <!-- /.container-fluid -->
 
     <!-- Modal Tambah -->
-    <div class="modal fade" id="addProduct" tabindex="-1" aria-labelledby="addProductLabel" aria-hidden="true">
+    <div class="modal fade" id="addTransaksi" tabindex="-1" aria-labelledby="addTransaksiLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <form class="modal-content" method="POST" action="{{ route('product.store') }}">
+            <form class="modal-content" method="POST" action="{{ route('transaksi.store') }}">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addProductLabel">Modal Tambah {{ $title }}</h5>
+                    <h5 class="modal-title" id="addTransaksiLabel">Modal Tambah {{ $title }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -120,26 +122,20 @@
                 <div class="modal-body">
                     <div class="form-row">
                         <div class="col">
-                            <label for="name">Name</label>
-                            <input type="text" name="name" id="name" class="form-control" placeholder="name" required>
+                            <label for="product_id">Id Product</label>
+                            <input type="text" name="product_id" id="product_id" class="form-control" placeholder="Id Product" required>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="col">
-                            <label for="weight">weight</label>
-                            <input type="text" name="weight" id="weight" class="form-control" placeholder="weight" required>
+                            <label for="total_amount">total_amount</label>
+                            <input type="text" name="total_amount" id="total_amount" class="form-control" placeholder="total_amount" required>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="col">
-                            <label for="size">Size</label>
-                            <input type="text" name="size" id="size" class="form-control" placeholder="size" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col">
-                            <label for="type">Type</label>
-                            <input type="text" name="type" id="type" class="form-control" placeholder="type" required>
+                            <label for="status">status</label>
+                            <input type="text" name="status" id="status" class="form-control" placeholder="status" required>
                         </div>
                     </div>
                 </div> <!-- Added closing div for modal-body -->
@@ -152,12 +148,12 @@
     </div>
 
     <!-- Modal Filter -->
-    <div class="modal fade" id="filterProduct" tabindex="-1" aria-labelledby="filterProductLabel" aria-hidden="true">
+    <div class="modal fade" id="filterTransaksi" tabindex="-1" aria-labelledby="filterTransaksiLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <form class="modal-content" method="GET" action="{{ url('product/filter') }}">
+            <form class="modal-content" method="GET" action="{{ url('transaksi/filter') }}">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title" id="filterProductLabel">Modal Filter {{ $title }}</h5>
+                    <h5 class="modal-title" id="filterTransaksiLabel">Modal Filter {{ $title }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -183,12 +179,12 @@
     </div>
 
     <!-- Modal Export -->
-    <div class="modal fade" id="exportProduct" tabindex="-1" aria-labelledby="exportProductLabel" aria-hidden="true">
+    <div class="modal fade" id="exportTransaksi" tabindex="-1" aria-labelledby="exportTransaksiLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <form class="modal-content" method="GET" action="{{ url('product/export') }}">
+            <form class="modal-content" method="GET" action="{{ url('transaksi/export') }}">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exportProductLabel">Modal Export {{ $title }}</h5>
+                    <h5 class="modal-title" id="exportTransaksiLabel">Modal Export {{ $title }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -217,7 +213,7 @@
     @foreach($data as $item)
     <div class="modal fade" id="edit{{ $item->id }}" tabindex="-1" aria-labelledby="edit{{ $item->id }}Label" aria-hidden="true">
         <div class="modal-dialog">
-            <form class="modal-content" method="POST" action="{{ url('product/update/' . $item->id) }}">
+            <form class="modal-content" method="POST" action="{{ url('transaksi/update/' . $item->id) }}">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title" id="edit{{ $item->id }}Label">Modal Edit {{ $title }}</h5>
@@ -225,26 +221,20 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="name" class="form-label">Name</label>
-                        <input type="text" name="name" id="name" class="form-control" placeholder="name" value="{{ $item->name }}" required>
+                        <label for="product_id" class="form-label">Id Product</label>
+                        <input type="text" name="product_id" id="product_id" class="form-control" placeholder="product_id" value="{{ $item->name_product }}" readonly>
                     </div>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="weight" class="form-label">Weight</label>
-                        <input type="text" name="weight" id="weight" class="form-control" placeholder="weight" value="{{ $item->weight }}" required>
+                        <label for="total_amount" class="form-label">Harga</label>
+                        <input type="text" name="total_amount" id="total_amount" class="form-control" placeholder="total_amount" value="{{ $item->total_amount }}" required>
                     </div>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="size" class="form-label">Size</label>
-                        <input type="text" name="size" id="size" class="form-control" placeholder="size" value="{{ $item->size }}" required>
-                    </div>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="type" class="form-label">Type</label>
-                        <input type="text" name="type" id="type" class="form-control" placeholder="type" value="{{ $item->type }}" required>
+                        <label for="status" class="form-label">status</label>
+                        <input type="text" name="status" id="status" class="form-control" placeholder="status" value="{{ $item->status }}" required>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -260,7 +250,7 @@
     <!-- Modal -->
     <div class="modal fade" id="hapus{{ $item->id }}" tabindex="-1" aria-labelledby="hapus{{ $item->id }}Label" aria-hidden="true">
         <div class="modal-dialog">
-        <form method="POST" action="{{ url('product/destroy/' . $item->id) }}" class="modal-content">
+        <form method="POST" action="{{ url('transaksi/destroy/' . $item->id) }}" class="modal-content">
             @csrf
             <div class="modal-header">
             <h5 class="modal-title" id="hapus{{ $item->id }}Label">Modal Hapus</h5>

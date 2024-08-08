@@ -119,39 +119,38 @@ class ProductController extends Controller
     }
 
     public function update(Request $request, $id)
-{
-    try {
-        // Validasi request
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'weight' => 'required|numeric|min:0',
-            'size' => 'required|string|max:255',
-            'type' => 'required|string|max:255',
-        ]);
+    {
+        try {
+            // Validasi request
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'weight' => 'required|numeric|min:0',
+                'size' => 'required|string|max:255',
+                'type' => 'required|string|max:255',
+            ]);
 
-        // Temukan data berdasarkan ID
-        $data = Product::find($id);
+            // Temukan data berdasarkan ID
+            $data = Product::find($id);
 
-        if (!$data) {
-            return back()->with('error', 'Product tidak ditemukan.');
+            if (!$data) {
+                return back()->with('error', 'Product tidak ditemukan.');
+            }
+
+            // Update data
+            $data->update([
+                'name' => $request->input('name'),
+                'weight' => $request->input('weight'),
+                'size' => $request->input('size'),
+                'type' => $request->input('type'),
+            ]);
+
+            // Kondisi Data Berhasil atau Gagal
+            return back()->with('success', 'Berhasil edit Menu');
+        } catch (\Exception $e) {
+            // Tangani kesalahan dengan mengembalikan pesan error
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
-
-        // Update data
-        $data->update([
-            'name' => $request->input('name'),
-            'weight' => $request->input('weight'),
-            'size' => $request->input('size'),
-            'type' => $request->input('type'),
-        ]);
-
-        // Kondisi Data Berhasil atau Gagal
-        return back()->with('success', 'Berhasil edit Menu');
-    } catch (\Exception $e) {
-        // Tangani kesalahan dengan mengembalikan pesan error
-        return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
     }
-}
-
 
     public function destroy(Request $request, $id)
     {

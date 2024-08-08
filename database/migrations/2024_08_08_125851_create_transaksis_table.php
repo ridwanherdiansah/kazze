@@ -13,7 +13,11 @@ return new class extends Migration
     {
         Schema::create('transaksis', function (Blueprint $table) {
             $table->id();
+            $table->string('product_id');
+            $table->decimal('total_amount', 10, 2);
+            $table->string('status');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
