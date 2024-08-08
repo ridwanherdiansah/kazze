@@ -8,6 +8,7 @@ use App\Exports\ProductExport;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -22,7 +23,20 @@ class ProductController extends Controller
                 'tanggal_akhir.required' => 'tanggal akhir harus diisi',
             ]);
 
-            $data = Product::select('*')
+            $data = Product::select(
+                'product.id',
+                'products.name',
+                'products.weight',
+                'products.size',
+                'products.type',
+                DB::raw("
+                    (SELECT COUNT(transaksis.product_id) 
+                     FROM transaksis 
+                     WHERE transaksis.product_id = products.id
+                    ) AS jumlah_transaksi"
+                ),
+                'products.created_at',
+            )
             ->whereDate('created_at', '>=', $request->tanggal_awal)
             ->whereDate('created_at', '<=', $request->tanggal_akhir)
             ->orderBy('id', 'desc')
@@ -49,7 +63,19 @@ class ProductController extends Controller
                 'tanggal_akhir.required' => 'tanggal akhir harus diisi',
             ]);
 
-            $data = Product::select('*')
+            $data = Product::select(
+                'products.name',
+                'products.weight',
+                'products.size',
+                'products.type',
+                DB::raw("
+                    (SELECT COUNT(transaksis.product_id) 
+                     FROM transaksis 
+                     WHERE transaksis.product_id = products.id
+                    ) AS jumlah_transaksi"
+                ),
+                'products.created_at',
+            )
             ->whereDate('created_at', '>=', $request->tanggal_awal)
             ->whereDate('created_at', '<=', $request->tanggal_akhir)
             ->orderBy('id', 'desc')
@@ -68,7 +94,21 @@ class ProductController extends Controller
             $title = "Product";
             $type_menu = 'Product';
 
-            $data = Product::all();
+            $data = Product::select(
+                'products.name',
+                'products.weight',
+                'products.size',
+                'products.type',
+                DB::raw("
+                    (SELECT COUNT(transaksis.product_id) 
+                     FROM transaksis 
+                     WHERE transaksis.product_id = products.id
+                    ) AS jumlah_transaksi"
+                ),
+                'products.created_at',
+            )
+            ->get();
+
             return view('Pages.Admin.Product.index', compact('title', 'type_menu', 'data'));
         } catch (\Throwable $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
@@ -111,7 +151,22 @@ class ProductController extends Controller
         
             $title = "Product";
             $type_menu = 'Product';
-            $data = Product::orderBy('id', 'desc')->where('name', 'like', '%' . $search . '%')->paginate(10);
+            $data = $data = Product::select(
+                'products.name',
+                'products.weight',
+                'products.size',
+                'products.type',
+                DB::raw("
+                    (SELECT COUNT(transaksis.product_id) 
+                     FROM transaksis 
+                     WHERE transaksis.product_id = products.id
+                    ) AS jumlah_transaksi"
+                ),
+                'products.created_at',
+            )
+            ->orderBy('id', 'desc')
+            ->where('name', 'like', '%' . $search . '%')
+            ->paginate(10);
             return view('Pages.Admin.Product.index', compact('data', 'type_menu', 'title'));
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());

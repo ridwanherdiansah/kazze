@@ -77,7 +77,7 @@
                                 <td>{{ $item->weight }}</td>
                                 <td>{{ $item->size }}</td>
                                 <td>{{ $item->type }}</td>
-                                <td>Jumlah Penjualan</td>
+                                <td>{{ $item->jumlah_transaksi }}</td>
                                 <td>{{ $item->created_at }}</td>
                                 <td>
                                     <button 

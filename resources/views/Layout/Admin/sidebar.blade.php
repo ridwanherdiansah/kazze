@@ -31,6 +31,13 @@
     <!-- Divider -->
     <hr class="sidebar-divider">
 
+    <!-- Nav Item - Transaksi -->
+    <li class="nav-item {{ $type_menu === 'Transaksi' ? 'active' : '' }}">
+        <a class="nav-link" href="{{ url('/transaksi') }}">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Transaksi</span></a>
+    </li>
+
 
     <!-- Sidebar Toggler (Sidebar) -->
     <div class="text-center d-none d-md-inline">

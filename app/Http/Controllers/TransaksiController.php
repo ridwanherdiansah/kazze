@@ -6,6 +6,7 @@ use App\Models\Transaksi;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\TransaksiExport;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TransaksiController extends Controller
 {
@@ -20,9 +21,22 @@ class TransaksiController extends Controller
                 'tanggal_akhir.required' => 'tanggal akhir harus diisi',
             ]);
 
-            $data = Transaksi::select('*')
-            ->whereDate('created_at', '>=', $request->tanggal_awal)
-            ->whereDate('created_at', '<=', $request->tanggal_akhir)
+            $data = Transaksi::select(
+                'transaksis.id',
+                'products.name AS name_product',
+                'transaksis.total_amount',
+                DB::raw("
+                    CASE 
+                        WHEN transaksis.status = 1 THEN 'Sudah Bayar' 
+                        WHEN transaksis.status = 0 THEN 'Belum Bayar' 
+                        ELSE 'Unknown'
+                    END AS status_transaksi"
+                ),
+                'transaksis.created_at'
+            )
+            ->leftJoin('products', 'transaksis.product_id', '=', 'products.id')
+            ->whereDate('transaksis.created_at', '>=', $request->tanggal_awal)
+            ->whereDate('transaksis.created_at', '<=', $request->tanggal_akhir)
             ->orderBy('id', 'desc')
             ->get();
             
@@ -47,9 +61,13 @@ class TransaksiController extends Controller
                 'tanggal_akhir.required' => 'tanggal akhir harus diisi',
             ]);
 
-            $data = Transaksi::select('*')
-            ->whereDate('created_at', '>=', $request->tanggal_awal)
-            ->whereDate('created_at', '<=', $request->tanggal_akhir)
+            $data = Transaksi::select(
+                'transaksis.*',
+                'products.name AS name_product'
+            )
+            ->leftJoin('products', 'transaksis.product_id', '=', 'products.id')
+            ->whereDate('transaksis.created_at', '>=', $request->tanggal_awal)
+            ->whereDate('transaksis.created_at', '<=', $request->tanggal_akhir)
             ->orderBy('id', 'desc')
             ->paginate(10);
             
@@ -66,7 +84,12 @@ class TransaksiController extends Controller
             $title = "Transaksi";
             $type_menu = 'Transaksi';
 
-            $data = Transaksi::all();
+            $data = Transaksi::select(
+                'transaksis.*',
+                'products.name AS name_product'
+            )
+            ->leftJoin('products', 'transaksis.product_id', '=', 'products.id')
+            ->get();
             return view('Pages.Admin.Transaksi.index', compact('title', 'type_menu', 'data'));
         } catch (\Throwable $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
