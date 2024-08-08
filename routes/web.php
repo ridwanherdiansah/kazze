@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,5 +33,15 @@ Route::post('/registrasi', [AuthController::class, 'store'])->name('auth.store')
 Route::group(['middleware' => ['auth']],function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class,'index'])->name('dashboard.index');
-
+    
+    // Product
+    Route::get('/product', [ProductController::class, 'index'])->name('product.index');
+    Route::get('/product/search', [ProductController::class, 'search'])->name('product.search');
+    Route::post('/product', [ProductController::class, 'store'])->name('product.store');
+    Route::get('/product/filter', [ProductController::class, 'filter'])->name('product.filter');
+    Route::get('/product/export', [ProductController::class, 'export'])->name('product.export');
+    Route::post('/product/update/{id}', [ProductController::class, 'update'])->name('product.update');
+    Route::post('/product/destroy/{id}', [ProductController::class, 'destroy'])->name('product.destroy');
+    
+    
 });

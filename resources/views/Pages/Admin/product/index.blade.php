@@ -9,21 +9,21 @@
         <h1 class="h3 mb-2 text-gray-800">{{ $title }}</h1>
         <p class="my-4">Lorem ipsum dolor sit amet consectetur, adipisicing elit.</p>
         <div class="my-4">
-            <button data-toggle="modal" data-target="#tambahSubMenu" class="btn btn-primary btn-icon-split">
+            <button data-toggle="modal" data-target="#addProduct" class="btn btn-primary btn-icon-split">
                 <span class="icon text-white-50">
                     <i class="fas fa-plus"></i>
                 </span>
                 <span class="text">Tambah</span>
             </button>
             
-            <button data-toggle="modal" data-target="#filterSubMenu" class="btn btn-secondary btn-icon-split">
+            <button data-toggle="modal" data-target="#filterProduct" class="btn btn-secondary btn-icon-split">
                 <span class="icon text-white-50">
                     <i class="fas fa-filter"></i>
                 </span>
                 <span class="text">Filter</span>
             </button>
             
-            <button data-toggle="modal" data-target="#exportSubMenu" class="btn btn-success btn-icon-split">
+            <button data-toggle="modal" data-target="#exportProduct" class="btn btn-success btn-icon-split">
                 <span class="icon text-white-50">
                     <i class="fas fa-file-export"></i>
                 </span>
@@ -31,13 +31,15 @@
             </button>
         </div>
 
+        <!-- Content Row -->
+
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
                 <div class="d-flex justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Tabel {{ $title }}</h6>
                     
-                    <form action="{{ route('subMenu.search') }}" method="GET">
+                    <form action="{{ route('product.search') }}" method="GET">
                         <div class="input-group">
                             <input type="text" name="search" class="form-control bg-light border-1 small" placeholder="Search for..."
                                 aria-label="Search" aria-describedby="basic-addon2">
@@ -51,19 +53,18 @@
                 </div>
                 
             </div>
+
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                         <thead>
                             <tr>
-                                <th>No</th>
                                 <th>Id</th>
-                                <th>Nama Menu</th>
-                                <th>Nama Sub Menu</th>
-                                <th>Url</th>
-                                <th>Type Menu</th>
-                                <th>Icon</th>
-                                <th>Status</th>
+                                <th>Name</th>
+                                <th>Weight</th>
+                                <th>Size</th>
+                                <th>Type</th>
+                                <th>Jumlah Penjualan</th>
                                 <th>Tanggal Di Buat</th>
                                 <th>Action</th>
                             </tr>
@@ -72,39 +73,27 @@
                             @foreach($data as $item)
                             <tr>
                                 <th scope="row">{{ $loop->iteration }}</th>
-                                <td>{{ $item->id }}</td>
-                                <td>{{ $item->menu_name }}</td>
-                                <td>{{ $item->nama }}</td>
-                                <td>{{ $item->url }}</td>
-                                <td>{{ $item->type_menu }}</td>
-                                <td>{{ $item->icon }}</td>
-                                <td>
-                                    <label class="custom-switch mt-2" onclick="window.location='{{ route('subMenu.status', ['id' => $item->id]) }}';">
-                                        <input type="checkbox"
-                                            name="custom-switch-checkbox"
-                                            class="custom-switch-input"
-                                            @if($item->status == "1") checked @endif>
-                                        <span class="custom-switch-indicator"></span>
-                                    </label>
-                                </td>
+                                <td>{{ $item->name }}</td>
+                                <td>{{ $item->weight }}</td>
+                                <td>{{ $item->size }}</td>
+                                <td>{{ $item->type }}</td>
+                                <td>Jumlah Penjualan</td>
                                 <td>{{ $item->created_at }}</td>
                                 <td>
-                                    @if(auth()->user()->status == 1)
                                     <button 
                                         href="javascript:;" 
                                         data-toggle="modal" 
-                                        data-target="#editSubmenu{{ $item->id }}"  
+                                        data-target="#edit{{ $item->id }}"  
                                         class="btn btn-warning btn-circle btn-sm">
                                         <i class="fas fa-exclamation-triangle"></i>
                                     </button>
                                     <button 
                                         href="javascript:;" 
                                         data-toggle="modal" 
-                                        data-target="#hapusSubmenu{{ $item->id }}"  
+                                        data-target="#hapus{{ $item->id }}"  
                                         class="btn btn-danger btn-circle btn-sm">
                                         <i class="fas fa-trash"></i>
                                     </button>
-                                    @endif
                                 </td>
                             </tr>
                             @endforeach
@@ -113,55 +102,44 @@
                 </div>
             </div>
         </div>
-        {!! $data->appends(request()->query())->links() !!}
+
     </div>
     <!-- /.container-fluid -->
 
     <!-- Modal Tambah -->
-    <div class="modal fade" id="tambahSubMenu" tabindex="-1" aria-labelledby="tambahSubMenuLabel" aria-hidden="true">
+    <div class="modal fade" id="addProduct" tabindex="-1" aria-labelledby="addProductLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <form class="modal-content" method="POST" action="{{ url('subMenu') }}">
+            <form class="modal-content" method="POST" action="{{ route('product.store') }}">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title" id="tambahSubMenuLabel">Modal Tambah {{ $title }}</h5>
+                    <h5 class="modal-title" id="addProductLabel">Modal Tambah {{ $title }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="menu_id">Menu</label>
-                            <select id="menu_id" name="menu_id" class="form-control">
-                                @foreach($menu as $item)
-                                    <option value="{{ $item->id }}" >{{ $item->menu }}</option>
-                                @endforeach
-                            </select>
-                            </div>
-                        <div class="form-group col-md-6">
-                        <label for="nama">Nama</label>
-                        <input type="text" name="nama" class="form-control" id="nama">
+                        <div class="col">
+                            <label for="name">Name</label>
+                            <input type="text" name="name" id="name" class="form-control" placeholder="name" required>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="url">Url</label>
-                        <input type="text" name="url" class="form-control" id="url">
-                    </div>
-                    <div class="form-group">
-                        <label for="type_menu">Type Menu</label>
-                        <input type="text" name="type_menu" class="form-control" id="type_menu">
+                    <div class="form-row">
+                        <div class="col">
+                            <label for="weight">weight</label>
+                            <input type="text" name="weight" id="weight" class="form-control" placeholder="weight" required>
+                        </div>
                     </div>
                     <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="icon">Icon</label>
-                            <input type="text" name="icon" class="form-control" id="icon">
-                            </div>
-                        <div class="form-group col-md-6">
-                        <label for="status">Status</label>
-                        <select id="status" name="status" class="form-control">
-                            <option value="1">Aktip</option>
-                            <option value="0">Tidak Aktip</option>
-                        </select>
+                        <div class="col">
+                            <label for="size">Size</label>
+                            <input type="text" name="size" id="size" class="form-control" placeholder="size" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col">
+                            <label for="type">Type</label>
+                            <input type="text" name="type" id="type" class="form-control" placeholder="type" required>
                         </div>
                     </div>
                 </div> <!-- Added closing div for modal-body -->
@@ -174,12 +152,12 @@
     </div>
 
     <!-- Modal Filter -->
-    <div class="modal fade" id="filterSubMenu" tabindex="-1" aria-labelledby="filterSubMenuLabel" aria-hidden="true">
+    <div class="modal fade" id="filterProduct" tabindex="-1" aria-labelledby="filterProductLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <form class="modal-content" method="GET" action="{{ url('subMenu/filter') }}">
+            <form class="modal-content" method="GET" action="{{ url('product/filter') }}">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title" id="filterSubMenuLabel">Modal Filter {{ $title }}</h5>
+                    <h5 class="modal-title" id="filterProductLabel">Modal Filter {{ $title }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -205,12 +183,12 @@
     </div>
 
     <!-- Modal Export -->
-    <div class="modal fade" id="exportSubMenu" tabindex="-1" aria-labelledby="exportSubMenuLabel" aria-hidden="true">
+    <div class="modal fade" id="exportProduct" tabindex="-1" aria-labelledby="exportProductLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <form class="modal-content" method="GET" action="{{ url('subMenu/export') }}">
+            <form class="modal-content" method="GET" action="{{ url('product/export') }}">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exportSubMenuLabel">Modal Export {{ $title }}</h5>
+                    <h5 class="modal-title" id="exportProductLabel">Modal Export {{ $title }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -226,7 +204,7 @@
                             <input type="date" name="tanggal_akhir" id="tanggal_akhir" class="form-control" placeholder="Menu" required>
                         </div>
                     </div>
-                </div>
+                </div> <!-- Added closing div for modal-body -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">Simpan</button>
@@ -237,49 +215,36 @@
 
     <!-- Modal Edit -->
     @foreach($data as $item)
-    <div class="modal fade" id="editSubmenu{{ $item->id }}" tabindex="-1" aria-labelledby="editSubmenu{{ $item->id }}}Label" aria-hidden="true">
+    <div class="modal fade" id="edit{{ $item->id }}" tabindex="-1" aria-labelledby="edit{{ $item->id }}Label" aria-hidden="true">
         <div class="modal-dialog">
-            <form class="modal-content" method="POST" action="{{ url('subMenu/update/' . $item->id) }}">
+            <form class="modal-content" method="POST" action="{{ url('product/update/' . $item->id) }}">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editSubmenu{{ $item->id }}}Label">Modal Edit {{ $title }}</h5>
+                    <h5 class="modal-title" id="edit{{ $item->id }}Label">Modal Edit {{ $title }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="menu_id">Menu</label>
-                            <select id="menu_id" name="menu_id" class="form-control">
-                                @foreach($menu as $itemMenus)
-                                    <option value="{{ $itemMenus->id }}" >{{ $itemMenus->menu }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group col-md-6">
-                        <label for="nama">Nama</label>
-                        <input type="text" value="{{ $item->nama }}" name="nama" class="form-control" id="nama">
-                        </div>
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" name="name" id="name" class="form-control" placeholder="name" value="{{ $item->name }}" required>
                     </div>
-                    <div class="form-group">
-                        <label for="url">Url</label>
-                        <input type="text" value="{{ $item->url }}" name="url" class="form-control" id="url">
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="weight" class="form-label">Weight</label>
+                        <input type="text" name="weight" id="weight" class="form-control" placeholder="weight" value="{{ $item->weight }}" required>
                     </div>
-                    <div class="form-group">
-                        <label for="type_menu">Type Menu</label>
-                        <input type="text" value="{{ $item->type_menu }}" name="type_menu" class="form-control" id="type_menu">
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="size" class="form-label">Size</label>
+                        <input type="text" name="size" id="size" class="form-control" placeholder="size" value="{{ $item->size }}" required>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="icon">Icon</label>
-                            <input type="text" value="{{ $item->icon }}" name="icon" class="form-control" id="icon">
-                            </div>
-                        <div class="form-group col-md-6">
-                        <label for="status">Status</label>
-                        <select id="status" name="status" class="form-control">
-                            <option value="1">Aktip</option>
-                            <option value="0">Tidak Aktip</option>
-                        </select>
-                        </div>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="type" class="form-label">Type</label>
+                        <input type="text" name="type" id="type" class="form-control" placeholder="type" value="{{ $item->type }}" required>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -293,27 +258,25 @@
 
     @foreach($data as $item)
     <!-- Modal -->
-    <div class="modal fade" id="hapusSubmenu{{ $item->id }}" tabindex="-1" aria-labelledby="hapusSubmenu{{ $item->id }}Label" aria-hidden="true">
+    <div class="modal fade" id="hapus{{ $item->id }}" tabindex="-1" aria-labelledby="hapus{{ $item->id }}Label" aria-hidden="true">
         <div class="modal-dialog">
-            <form method="POST" action="{{ url('subMenu/destroy/' . $item->id) }}" class="modal-content">
-                @csrf
-                <div class="modal-header">
-                <h5 class="modal-title" id="hapusSubmenu{{ $item->id }}Label">Modal title</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                </div>
-                <div class="modal-body">
-                    Apakah anda ingin menghapus data ini <h3>{{ $item->nama }}</h3>
-                </div>
-                <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-danger">Delete changes</button>
-                </div>
-            </form>
+        <form method="POST" action="{{ url('product/destroy/' . $item->id) }}" class="modal-content">
+            @csrf
+            <div class="modal-header">
+            <h5 class="modal-title" id="hapus{{ $item->id }}Label">Modal Hapus</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                Apakah anda ingin menghapus data ini <h3>{{ $item->menu }}</h3>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-danger">Hapus</button>
+            </div>
+        </div>
         </div>
     </div>
     @endforeach
-
 
 @endsection
